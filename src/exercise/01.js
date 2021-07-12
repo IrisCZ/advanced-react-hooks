@@ -3,18 +3,55 @@
 
 import * as React from 'react'
 
-function Counter({initialCount = 0, step = 1}) {
-  // 🐨 replace React.useState with React.useReducer.
-  // 💰 React.useReducer(countReducer, initialCount)
-  const [count, setCount] = React.useState(initialCount)
 
-  // 💰 you can write the countReducer function so you don't have to make any
-  // changes to the next two lines of code! Remember:
-  // The 1st argument is called "state" - the current value of count
-  // The 2nd argument is called "newState" - the value passed to setCount
-  const increment = () => setCount(count + step)
+// const countReducer = (state, newState) => newState + state
+
+// const countReducerWithObject = (state, action) => {...state, ...action}
+
+// const countReducerWithFunction = (state, action) => ({
+//      ...state, 
+//      ...(typeof action === "function" ? action(state) : action)
+// })
+
+const countReducerWithDistach = (state, action) => {
+  const {type, step} = action
+  switch (type) {
+    case 'INCREMENT':
+      return {...state, count: state.count + step}
+    default: {
+      throw new Error(`Unsuported action type: ${type}`)
+    }
+      
+  }
+}
+
+function Counter({initialCount = 0, step = 1}) {
+  // const [count, changeCount] = React.useReducer(countReducer, initialCount)
+  // const increment = () => changeCount(step)
+
+  // const [state, setState] = React.useReducer(countReducerWithObject, {
+  //   count: initialCount,
+  // })
+  // const {count} = state
+  // const increment = () => setState({count: count + step})
+
+  // const [state, setState] = React.useReducer(countReducerWithFunction, {
+  //   count: initialCount,
+  // })
+  // const {count} = state
+  // const increment = () =>
+  //   setState(currentState => ({count: currentState.count + step}))
+
+  const [state, dispatch] = React.useReducer(countReducerWithDistach, {
+    count: initialCount,
+  })
+  const {count} = state
+  const increment = () => dispatch({type: 'INCREMENT', step})
+  
   return <button onClick={increment}>{count}</button>
 }
+
+
 
 function App() {
   return <Counter />
